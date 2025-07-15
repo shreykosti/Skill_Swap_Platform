@@ -1,8 +1,8 @@
-import Index from "@/pages/Index";
+import SignUp from "@/pages/SignUp";
 export default function Page() {
   return (
     <div>
-      <Index />
+      <SignUp />
     </div>
   );
 }
