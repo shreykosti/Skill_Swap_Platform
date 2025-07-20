@@ -11,64 +11,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!acceptTerms) {
-      toast({
-        title: "Error",
-        description: "Please accept the terms and conditions.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Account created!",
-        description:
-          "Welcome to Skill Swap Platform. Please verify your email.",
-      });
-      setIsLoading(false);
-      // In a real app, redirect to verification page or dashboard
-    }, 1000);
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("errssor");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
@@ -91,7 +44,7 @@ const SignUp = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-slate-200">
                   Full Name
@@ -101,10 +54,10 @@ const SignUp = () => {
                   name="name"
                   type="text"
                   placeholder="Enter your full name"
-                  value={formData.name}
-                  onChange={handleInputChange}
                   className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoComplete="name"
                 />
               </div>
 
@@ -117,10 +70,10 @@ const SignUp = () => {
                   name="email"
                   type="email"
                   placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
                   className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
                 />
               </div>
 
@@ -134,10 +87,10 @@ const SignUp = () => {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
-                    value={formData.password}
-                    onChange={handleInputChange}
                     className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
                   />
                   <Button
                     type="button"
@@ -155,80 +108,33 @@ const SignUp = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-slate-200">
-                  Confirm Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-slate-600 text-slate-400"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={acceptTerms}
-                  onCheckedChange={(checked) =>
-                    setAcceptTerms(checked as boolean)
-                  }
-                />
-                <Label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-200"
-                >
-                  I agree to the{" "}
-                  <Link
-                    href="/terms"
-                    className="text-green-400 hover:underline"
-                  >
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link
-                    href="/privacy"
-                    className="text-green-400 hover:underline"
-                  >
-                    Privacy Policy
-                  </Link>
-                </Label>
-              </div>
-
-              <Button
-                type="submit"
+              <button
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
-                disabled={isLoading}
+                onClick={async () => {
+                  const response = await axios.post(
+                    "http://localhost:3000/api/auth/signup",
+                    {
+                      name,
+                      email,
+                      password,
+                    }
+                  );
+                  if (response.status === 200) {
+                    router.push("/f/user/profile/editprofile");
+                  } else {
+                    setError(response.data.error || "An error occurred");
+                  }
+                }}
               >
-                {isLoading ? "Creating account..." : "Create Account"}
-              </Button>
-            </form>
+                Create Account
+              </button>
+            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-400">
                 Already have an account?{" "}
                 <Link
-                  href="/signin"
+                  href="/f/auth/signin"
                   className="font-medium text-green-400 hover:underline"
                 >
                   Sign in
@@ -238,6 +144,7 @@ const SignUp = () => {
           </CardContent>
         </Card>
       </div>
+      {error}
     </div>
   );
 };

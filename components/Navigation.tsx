@@ -1,15 +1,20 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Bell, User, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useState, useEffect, use } from "react";
+import { signOut } from "next-auth/react";
 
-interface NavigationProps {
-  currentPage: string;
-  onPageChange: (page: string) => void;
-}
-
-export function Navigation({ currentPage, onPageChange }: NavigationProps) {
+export function Navigation() {
+  const { status } = useSession();
+  const [authStatus, setAuthStatus] = useState(status);
+  useEffect(() => {
+    setAuthStatus(status);
+  }, [status]);
   return (
     <nav className="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,54 +33,76 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
               <Input
                 placeholder="Search skills..."
                 className="pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 focus:ring-green-500"
+                onChange={(e) => console.log(e.target.value)}
               />
             </div>
           </div>
 
           {/* Navigation Links */}
           <div className="flex items-center space-x-6">
-            <Button
-              variant={currentPage === "browse" ? "default" : "ghost"}
-              onClick={() => onPageChange("browse")}
-              className="text-sm"
-            >
-              Browse Skills
-            </Button>
-            <Button
-              variant={currentPage === "swaps" ? "default" : "ghost"}
-              onClick={() => onPageChange("swaps")}
-              className="text-sm relative"
-            >
-              My Swaps
-              <Badge className="ml-2 bg-yellow-500 text-black text-xs">3</Badge>
-            </Button>
-            <Button
-              variant={currentPage === "profile" ? "default" : "ghost"}
-              onClick={() => onPageChange("profile")}
-              className="text-sm"
-            >
-              Profile
-            </Button>
-
-            {/* Notifications */}
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5 text-slate-300" />
-              <Badge className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                2
-              </Badge>
-            </Button>
-
-            {/* Auth Buttons */}
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/signin">Sign In</Link>
+            <Button className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] size-sm">
+              <Link href="/">Browse Skills</Link>
             </Button>
             <Button
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
-              asChild
+              className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px]"
             >
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/f/user/myswaps">My Swaps</Link>
+              <Badge className="ml-2 bg-yellow-500 text-black text-xs">3</Badge>
             </Button>
+            <Button
+              size="sm"
+              className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px]"
+            >
+              <Link href="/f/user/profile">Profile</Link>
+            </Button>
+
+            {/* Auth Buttons */}
+            <div
+              className={
+                authStatus == "authenticated" ? "hidden" : "flex space-x-2"
+              }
+            >
+              <Button
+                size="sm"
+                className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px]"
+                onClick={() => {
+                  signIn();
+                }}
+              >
+                signIn
+                {/* <Link href="/f/auth/signin">Sign In</Link> */}
+              </Button>
+              <Button
+                size="sm"
+                className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] bg-green-600"
+              >
+                <Link
+                  href="/f/auth/signup"
+                  onClick={() => {
+                    console.log("Sign Up Clicked");
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </Button>
+            </div>
+            <div
+              className={
+                authStatus === "authenticated" ? "flex space-x-2" : "hidden"
+              }
+            >
+              <Button
+                size="sm"
+                className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] bg-green-600"
+                onClick={() => {
+                  signOut();
+                  setAuthStatus("unauthenticated");
+                }}
+              >
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </div>

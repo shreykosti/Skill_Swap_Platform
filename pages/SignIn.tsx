@@ -12,30 +12,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { signIn, signOut } from "next-auth/react";
+
+import { useSession } from "next-auth/react";
 
 const SignIn = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
-      });
-      setIsLoading(false);
-      // In a real app, redirect to dashboard
-    }, 1000);
-  };
-
+  const session = useSession();
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
       <div className="w-full max-w-md space-y-4">
@@ -57,7 +43,7 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-200">
                   Email
@@ -66,10 +52,10 @@ const SignIn = () => {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                  required
+                  autoComplete="USERNAME"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </div>
 
@@ -82,10 +68,11 @@ const SignIn = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                    required
+                    autoComplete="current-password"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                   <Button
                     type="button"
@@ -104,28 +91,38 @@ const SignIn = () => {
               </div>
 
               <Button
-                type="submit"
+                onClick={() => {
+                  signIn();
+                }}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
-                disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                SignIn
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-400">
-                Don't have an account?{" "}
+                Don't have an account?{"   "}
                 <Link
-                  href="/signup"
+                  href="/f/auth/signup"
                   className="font-medium text-green-400 hover:underline"
                 >
-                  Sign up
+                  Sign up{JSON.stringify(session)}
                 </Link>
               </p>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      <button
+        className="text-green-500 hover:text-green-700 mt-4"
+        onClick={() => {
+          signOut();
+        }}
+      >
+        signout
+      </button>
     </div>
   );
 };

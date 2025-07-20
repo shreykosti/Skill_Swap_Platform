@@ -1,10 +1,23 @@
+"use client";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Upload } from "lucide-react";
@@ -24,7 +37,11 @@ interface EditProfileDialogProps {
   children: React.ReactNode;
 }
 
-export function EditProfileDialog({ user, onSave, children }: EditProfileDialogProps) {
+export function EditProfileDialog({
+  user,
+  onSave,
+  children,
+}: EditProfileDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: user.name,
@@ -32,7 +49,7 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
     bio: user.bio || "",
     availability: user.availability,
     isPublic: user.isPublic ?? true,
-    avatar: user.avatar
+    avatar: user.avatar,
   });
   const { toast } = useToast();
 
@@ -49,20 +66,19 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
     // In a real app, this would open file picker
     toast({
       title: "Photo Upload",
-      description: "Profile photo upload would be implemented with Supabase storage.",
+      description:
+        "Profile photo upload would be implemented with Supabase storage.",
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-md bg-slate-800 border-slate-700">
         <DialogHeader>
           <DialogTitle className="text-white">Edit Profile</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Profile Photo */}
           <div className="flex flex-col items-center space-y-4">
@@ -91,33 +107,45 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
           {/* Basic Info */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name" className="text-slate-200">Full Name *</Label>
+              <Label htmlFor="name" className="text-slate-200">
+                Full Name *
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Your full name"
                 className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <Label htmlFor="location" className="text-slate-200">Location (Optional)</Label>
+              <Label htmlFor="location" className="text-slate-200">
+                Location (Optional)
+              </Label>
               <Input
                 id="location"
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
                 placeholder="e.g., San Francisco, CA"
                 className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <Label htmlFor="bio" className="text-slate-200">Bio (Optional)</Label>
+              <Label htmlFor="bio" className="text-slate-200">
+                Bio (Optional)
+              </Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, bio: e.target.value })
+                }
                 placeholder="Tell others about yourself and your interests..."
                 rows={3}
                 className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
@@ -125,10 +153,14 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
             </div>
 
             <div>
-              <Label htmlFor="availability" className="text-slate-200">Availability</Label>
+              <Label htmlFor="availability" className="text-slate-200">
+                Availability
+              </Label>
               <Select
                 value={formData.availability}
-                onValueChange={(value) => setFormData({ ...formData, availability: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, availability: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -146,7 +178,9 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
             {/* Privacy Setting */}
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="public-profile" className="text-slate-200">Public Profile</Label>
+                <Label htmlFor="public-profile" className="text-slate-200">
+                  Public Profile
+                </Label>
                 <p className="text-sm text-slate-400">
                   Allow others to find and view your profile
                 </p>
@@ -154,17 +188,26 @@ export function EditProfileDialog({ user, onSave, children }: EditProfileDialogP
               <Switch
                 id="public-profile"
                 checked={formData.isPublic}
-                onCheckedChange={(checked) => setFormData({ ...formData, isPublic: checked })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isPublic: checked })
+                }
               />
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex space-x-2">
-            <Button onClick={handleSave} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+            <Button
+              onClick={handleSave}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            >
               Save Changes
             </Button>
-            <Button onClick={() => setOpen(false)} variant="outline" className="flex-1 border-slate-600 text-slate-200">
+            <Button
+              onClick={() => setOpen(false)}
+              variant="outline"
+              className="flex-1 border-slate-600 text-slate-200"
+            >
               Cancel
             </Button>
           </div>

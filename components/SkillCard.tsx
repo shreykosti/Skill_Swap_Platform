@@ -1,8 +1,10 @@
+"use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star, Clock, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Skill {
   id: string;
@@ -34,8 +36,6 @@ export function SkillCard({
   skillsWanted,
   availability,
   isOnline,
-  onRequestSwap,
-  onViewProfile
 }: SkillCardProps) {
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -51,7 +51,7 @@ export function SkillCard({
         return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
-
+  const router = useRouter();
   return (
     <Card className="bg-slate-800 border-slate-700 shadow-lg hover:shadow-xl hover:bg-slate-750 transition-all duration-300 hover:scale-[1.02] rounded-xl">
       <CardHeader className="pb-4">
@@ -94,7 +94,9 @@ export function SkillCard({
       <CardContent className="space-y-4">
         {/* Skills Offered */}
         <div>
-          <h4 className="text-sm font-medium text-white mb-2">Skills Offered</h4>
+          <h4 className="text-sm font-medium text-white mb-2">
+            Skills Offered
+          </h4>
           <div className="flex flex-wrap gap-2">
             {skillsOffered.slice(0, 3).map((skill) => (
               <Badge
@@ -107,7 +109,10 @@ export function SkillCard({
               </Badge>
             ))}
             {skillsOffered.length > 3 && (
-              <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
+              <Badge
+                variant="outline"
+                className="text-xs border-slate-600 text-slate-300"
+              >
                 +{skillsOffered.length - 3} more
               </Badge>
             )}
@@ -127,7 +132,10 @@ export function SkillCard({
               </Badge>
             ))}
             {skillsWanted.length > 3 && (
-              <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
+              <Badge
+                variant="outline"
+                className="text-xs border-slate-600 text-slate-300"
+              >
                 +{skillsWanted.length - 3} more
               </Badge>
             )}
@@ -137,15 +145,17 @@ export function SkillCard({
         {/* Actions */}
         <div className="flex space-x-2 pt-2">
           <Button
-            onClick={() => onRequestSwap(id)}
+            onClick={() => {
+              router.push("/f/user/myswaps/swaprequest");
+            }}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white transition-colors duration-200 rounded-lg"
             size="sm"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
             Request Swap
           </Button>
+
           <Button
-            onClick={() => onViewProfile(id)}
             variant="outline"
             size="sm"
             className="border-slate-600 hover:bg-slate-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all duration-200 rounded-lg"

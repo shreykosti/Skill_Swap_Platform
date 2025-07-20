@@ -1,10 +1,23 @@
+"use client";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -24,20 +37,48 @@ interface SkillManagementDialogProps {
 }
 
 const skillSuggestions = [
-  "React", "Python", "JavaScript", "UI/UX Design", "Node.js", "TypeScript",
-  "Figma", "Photoshop", "Excel", "Data Science", "Machine Learning", "Java",
-  "CSS", "HTML", "Vue.js", "Angular", "PHP", "Ruby", "Go", "Rust",
-  "Adobe Illustrator", "Video Editing", "3D Modeling", "Photography",
-  "Digital Marketing", "Content Writing", "SEO", "Social Media Marketing"
+  "React",
+  "Python",
+  "JavaScript",
+  "UI/UX Design",
+  "Node.js",
+  "TypeScript",
+  "Figma",
+  "Photoshop",
+  "Excel",
+  "Data Science",
+  "Machine Learning",
+  "Java",
+  "CSS",
+  "HTML",
+  "Vue.js",
+  "Angular",
+  "PHP",
+  "Ruby",
+  "Go",
+  "Rust",
+  "Adobe Illustrator",
+  "Video Editing",
+  "3D Modeling",
+  "Photography",
+  "Digital Marketing",
+  "Content Writing",
+  "SEO",
+  "Social Media Marketing",
 ];
 
-export function SkillManagementDialog({ type, skills, onSave, children }: SkillManagementDialogProps) {
+export function SkillManagementDialog({
+  type,
+  skills,
+  onSave,
+  children,
+}: SkillManagementDialogProps) {
   const [open, setOpen] = useState(false);
   const [currentSkills, setCurrentSkills] = useState<Skill[]>(skills);
   const [newSkill, setNewSkill] = useState({
     name: "",
     level: "Beginner" as const,
-    description: ""
+    description: "",
   });
   const { toast } = useToast();
 
@@ -48,7 +89,7 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
       id: Date.now().toString(),
       name: newSkill.name.trim(),
       level: newSkill.level,
-      description: newSkill.description.trim() || undefined
+      description: newSkill.description.trim() || undefined,
     };
 
     setCurrentSkills([...currentSkills, skill]);
@@ -56,7 +97,7 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
   };
 
   const handleRemoveSkill = (skillId: string) => {
-    setCurrentSkills(currentSkills.filter(skill => skill.id !== skillId));
+    setCurrentSkills(currentSkills.filter((skill) => skill.id !== skillId));
   };
 
   const handleSave = () => {
@@ -69,7 +110,11 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    if (currentSkills.some(skill => skill.name.toLowerCase() === suggestion.toLowerCase())) {
+    if (
+      currentSkills.some(
+        (skill) => skill.name.toLowerCase() === suggestion.toLowerCase()
+      )
+    ) {
       return; // Skill already exists
     }
     setNewSkill({ ...newSkill, name: suggestion });
@@ -92,21 +137,15 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-2xl bg-card border-border max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-foreground">
-            Manage {type === "offered" ? "Skills I Offer" : "Skills I Want to Learn"}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-6">
+        <div className="space-y-6 text-white bg-black p-8">
           {/* Current Skills */}
           <div>
-            <h3 className="text-sm font-medium text-foreground mb-3">Current Skills</h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+            <h3 className="text-sm font-medium text-foreground mb-3">
+              Current Skills
+            </h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto bg-white">
               {currentSkills.map((skill) => (
                 <div
                   key={skill.id}
@@ -114,10 +153,14 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                      <span className="font-medium text-foreground">{skill.name}</span>
+                      <span className="font-medium text-foreground">
+                        {skill.name}
+                      </span>
                       {type === "offered" && (
                         <Badge
-                          className={`text-xs border ${getLevelColor(skill.level)}`}
+                          className={`text-xs border ${getLevelColor(
+                            skill.level
+                          )}`}
                           variant="outline"
                         >
                           {skill.level}
@@ -125,7 +168,9 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
                       )}
                     </div>
                     {skill.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{skill.description}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {skill.description}
+                      </p>
                     )}
                   </div>
                   <Button
@@ -147,25 +192,31 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
 
           {/* Add New Skill */}
           <div className="space-y-4 border-t pt-4">
-            <h3 className="text-sm font-medium text-foreground">Add New Skill</h3>
-            
+            <h3 className="text-sm font-medium text-foreground">
+              Add New Skill
+            </h3>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="skill-name">Skill Name *</Label>
                 <Input
                   id="skill-name"
                   value={newSkill.name}
-                  onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewSkill({ ...newSkill, name: e.target.value })
+                  }
                   placeholder="e.g., React, Python, Design"
                 />
               </div>
-              
+
               {type === "offered" && (
                 <div>
                   <Label htmlFor="skill-level">Proficiency Level</Label>
                   <Select
                     value={newSkill.level}
-                    onValueChange={(value: any) => setNewSkill({ ...newSkill, level: value })}
+                    onValueChange={(value: any) =>
+                      setNewSkill({ ...newSkill, level: value })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -186,10 +237,13 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
               <Textarea
                 id="skill-description"
                 value={newSkill.description}
-                onChange={(e) => setNewSkill({ ...newSkill, description: e.target.value })}
-                placeholder={type === "offered" 
-                  ? "Describe your experience and what you can teach..."
-                  : "What specific aspects would you like to learn?"
+                onChange={(e) =>
+                  setNewSkill({ ...newSkill, description: e.target.value })
+                }
+                placeholder={
+                  type === "offered"
+                    ? "Describe your experience and what you can teach..."
+                    : "What specific aspects would you like to learn?"
                 }
                 rows={2}
               />
@@ -203,21 +257,26 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
 
           {/* Skill Suggestions */}
           <div>
-            <h3 className="text-sm font-medium text-foreground mb-3">Popular Skills</h3>
+            <h3 className="text-sm font-medium text-foreground mb-3">
+              Popular Skills
+            </h3>
             <div className="flex flex-wrap gap-2">
               {skillSuggestions.map((suggestion) => {
-                const isAdded = currentSkills.some(skill => 
-                  skill.name.toLowerCase() === suggestion.toLowerCase()
+                const isAdded = currentSkills.some(
+                  (skill) =>
+                    skill.name.toLowerCase() === suggestion.toLowerCase()
                 );
                 return (
                   <Badge
                     key={suggestion}
                     className={`cursor-pointer transition-all ${
-                      isAdded 
-                        ? "bg-muted text-muted-foreground opacity-50" 
+                      isAdded
+                        ? "bg-muted text-muted-foreground opacity-50"
                         : "bg-skill-tag text-skill-tag-foreground hover:scale-105"
                     }`}
-                    onClick={() => !isAdded && handleSuggestionClick(suggestion)}
+                    onClick={() =>
+                      !isAdded && handleSuggestionClick(suggestion)
+                    }
                   >
                     {suggestion}
                     {isAdded && " ✓"}
@@ -232,7 +291,11 @@ export function SkillManagementDialog({ type, skills, onSave, children }: SkillM
             <Button onClick={handleSave} className="flex-1">
               Save Changes
             </Button>
-            <Button onClick={() => setOpen(false)} variant="outline" className="flex-1">
+            <Button
+              onClick={() => setOpen(false)}
+              variant="outline"
+              className="flex-1"
+            >
               Cancel
             </Button>
           </div>
