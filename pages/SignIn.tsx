@@ -43,7 +43,7 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-200">
                   Email
@@ -73,6 +73,7 @@ const SignIn = () => {
                     onChange={(e) => {
                       setPassword(e.target.value);
                     }}
+                    value={password}
                   />
                   <Button
                     type="button"
@@ -91,14 +92,19 @@ const SignIn = () => {
               </div>
 
               <Button
-                onClick={() => {
-                  signIn();
+                onClick={async () => {
+                  const result = await signIn("credentials", {
+                    email: email,
+                    password: password,
+                    redirect: false,
+                  });
+                  console.log(result);
                 }}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 SignIn
               </Button>
-            </form>
+            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-400">

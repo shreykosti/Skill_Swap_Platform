@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "@/pages/node_modules/next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
@@ -6,10 +6,10 @@ import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const prisma = new PrismaClient();
 const schema = z.object({
-  profileStatus: z.boolean(),
+  public: z.boolean(),
 });
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(NEXT_AUTH);
     const id = session?.user?.id;
@@ -26,15 +26,15 @@ export async function POST(req: NextResponse) {
     const parsedData = schema.safeParse(body);
     if (!parsedData.success) {
       return NextResponse.json(
-        { message: "Invalid profileStatus" },
+        { message: "Invalid profileStatushi" },
         { status: 201 }
       );
     }
 
     if (
-      body.profileStatus == null ||
-      body.profileStatus == undefined ||
-      body.profileStatus == session.user?.profileStatus
+      body.ispublic == null ||
+      body.ispublic == undefined ||
+      body.ispublic == session.user?.ispublic
     ) {
       return NextResponse.json(
         { message: "profileStatus is not invalid or same" },
@@ -45,7 +45,7 @@ export async function POST(req: NextResponse) {
     const update = await prisma.user.update({
       where: { id: id || "" },
       data: {
-        profileStatus: body.profileStatus,
+        public: body.ispublic,
       },
     });
 
@@ -66,7 +66,5 @@ export async function POST(req: NextResponse) {
       { message: "Internal Server Error" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

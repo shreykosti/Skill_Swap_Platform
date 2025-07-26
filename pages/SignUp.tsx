@@ -114,7 +114,7 @@ const SignUp = () => {
                   const response = await axios.post(
                     "http://localhost:3000/api/auth/signup",
                     {
-                      name,
+                      username: name,
                       email,
                       password,
                     }

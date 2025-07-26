@@ -1,9 +1,7 @@
-import { constructNow } from "date-fns";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { pages } from "next/dist/build/templates/app-page";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 import zod from "zod";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -41,18 +39,18 @@ export const NEXT_AUTH = {
           return null;
         }
 
-        const existingUser = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { email: email || "" },
         });
 
-        if (!existingUser) {
+        if (!user) {
           console.log("User not found");
           return null;
         }
 
         const isPasswordValid = await bcrypt.compare(
           password || "",
-          existingUser.hashpassword
+          user.password
         );
 
         if (!isPasswordValid) {
@@ -60,15 +58,16 @@ export const NEXT_AUTH = {
           return null;
         }
 
-        console.log("User:", existingUser);
+        console.log("User:", user);
         return {
-          id: existingUser.id,
+          id: user.id,
           email,
-          name: existingUser.name,
-          location: existingUser.location,
-          availability: existingUser.availability,
-          profileStatus: existingUser.profileStatus,
-          bio: existingUser.bio,
+          username: user.username,
+          location: user.location,
+          availability: user.avaTime,
+          public: user.public,
+          bio: user.bio,
+          averageRating: user.averageRating,
         };
       },
     }),
@@ -79,38 +78,41 @@ export const NEXT_AUTH = {
     jwt: async ({ token, user, trigger, session }: any) => {
       if (user) {
         // Initial sign in
-        token.name = user.name;
+        token.username = user.username;
         token.email = user.email;
         const u = user as any;
         token.location = u.location;
-        token.availability = u.availability;
-        token.profileStatus = u.profileStatus;
+        token.avaTime = u.avaTime;
+        token.public = u.public;
         token.bio = u.bio;
+        token.averageRating = u.averageRating;
       }
-
       // 👇 This handles updates from `update()` on the client
       if (trigger === "update") {
-        token.name = session.name ?? token.name;
+        token.username = session.username ?? token.username;
+        token.email = session.email ?? token.email;
         token.location = session.location ?? token.location;
-        token.availability = session.availability ?? token.availability;
-        token.profileStatus = session.profileStatus ?? token.profileStatus;
+        token.avaTime = session.avaTime ?? token.avaTime;
+        token.public = session.public ?? token.public;
         token.bio = session.bio ?? token.bio;
+        token.averageRating = session.averageRating ?? token.averageRating;
       }
 
       return token;
     },
     session: ({ session, token }: any) => {
       session.user.id = token.sub;
-      session.user.name = token.name;
+      session.user.username = token.username;
       session.user.email = token.email;
       session.user.location = token.location;
-      session.user.availability = token.availability;
-      session.user.profileStatus = token.profileStatus;
+      session.user.avaTime = token.avaTime;
+      session.user.public = token.public;
       session.user.bio = token.bio;
+      session.user.averageRating = token.averageRating;
       return session;
     },
   },
-  // pages: {
-  //   signIn: "/f/auth/signin",
-  // },
+  pages: {
+    signIn: "/f/auth/signin",
+  },
 };

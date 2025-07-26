@@ -17,26 +17,46 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  hashpassword  String
-  name      String   @unique
-  location        String?
-  availability    String?   
-  profileStatus Boolean @default(true)
-  bio       String?
-  skills    Skill[]
+  password  String  
+  username  String?  @unique 
+  location  String?  
+  bio       String?  @db.Text
+  public    Boolean? @default(true)
+  avaTime   String?  @default("anytime")
+  averageRating Float? @default(0)
+  // --- Relationships ---
+  skills UserSkill[]
+
 }
 
 model Skill {
-  id   Int    @id @default(autoincrement())
-  email String 
-  skillname String 
-  skillType SkillType
-  skillLevel String?
-  skillDescription String?
-  User User @relation(fields: [email], references: [email])
+  id          Int      @id @default(autoincrement())
+  name        String   @unique 
+  category    String?  @default("tech")
+  users UserSkill[]
+}
+
+model UserSkill {
+  userId  String
+  skillId Int
+  type    SkillType 
+  level   SkillLevel? 
+  description String?     @db.Text 
+  // --- Relationships ---
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+ @@id([userId, skillId, type])
 }
 
 enum SkillType {
   OFFERED
   WANTED
 }
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+

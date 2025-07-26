@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "@/pages/node_modules/next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
@@ -9,7 +9,7 @@ const schema = z.object({
   bio: z.string().min(1, "Bio is required"),
 });
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(NEXT_AUTH);
     const id = session?.user?.id;
@@ -64,7 +64,5 @@ export async function POST(req: NextResponse) {
       { message: "Internal Server Error" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

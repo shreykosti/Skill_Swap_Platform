@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "@/pages/node_modules/next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
@@ -6,10 +6,10 @@ import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const prisma = new PrismaClient();
 const schema = z.object({
-  name: z.string().min(1, "Name is required"),
+  username: z.string().min(1, "Name is required"),
 });
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(NEXT_AUTH);
     const id = session?.user?.id;
@@ -29,19 +29,19 @@ export async function POST(req: NextResponse) {
     }
 
     if (
-      body.name == "" ||
-      body.name == null ||
-      body.name == undefined ||
-      body.name == session.user?.name
+      body.username == "" ||
+      body.username == null ||
+      body.username == undefined ||
+      body.username == session.user?.username
     ) {
       return NextResponse.json(
-        { message: "Name is not invalid or same" },
+        { message: "username is not invalid or same" },
         { status: 201 }
       );
     }
 
     const nameCheck = await prisma.user.findUnique({
-      where: { name: body.name },
+      where: { username: body.username },
     });
 
     if (nameCheck) {
@@ -54,7 +54,7 @@ export async function POST(req: NextResponse) {
     const update = await prisma.user.update({
       where: { id: id || "" },
       data: {
-        name: body.name,
+        username: body.username,
       },
     });
 
@@ -75,7 +75,5 @@ export async function POST(req: NextResponse) {
       { message: "Internal Server Error" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

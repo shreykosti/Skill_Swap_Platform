@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star, Clock, MessageCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/pages/node_modules/next/navigation";
 
 interface Skill {
   id: string;
@@ -22,8 +22,6 @@ interface SkillCardProps {
   skillsWanted: Skill[];
   availability: string;
   isOnline: boolean;
-  onRequestSwap: (userId: string) => void;
-  onViewProfile: (userId: string) => void;
 }
 
 export function SkillCard({

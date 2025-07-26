@@ -21,25 +21,29 @@ export default function EditProfile() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   console.log(session);
-  const user = session?.user;
+  const user: any = session?.user;
 
   const [error, setError] = useState("update101");
-  const [name, setName] = useState(user?.name || "");
-  const [location, setLocation] = useState(user?.location || "");
-  const [bio, setBio] = useState(user?.bio || "");
-  const [availability, setAvailability] = useState(user?.availability || "");
-  const [profileStatus, setProfileStatus] = useState(
-    user?.profileStatus || true
+  const [username, setUsername] = useState(
+    user?.username || "update your username here"
   );
+  const [location, setLocation] = useState(
+    user?.location || "update your location here"
+  );
+  const [bio, setBio] = useState(user?.bio || "update your bio here");
+  const [avaTime, setAvaTime] = useState(
+    user?.avaTime || "update your avaTime here"
+  );
+  const [ispublic, setisPublic] = useState(user?.public || true);
 
   useEffect(() => {
     if (session) {
-      const user = session.user;
-      setName(user?.name || "");
+      const user: any = session.user;
+      setUsername(user?.username || "");
       setLocation(user?.location || "");
       setBio(user?.bio || "");
-      setAvailability(user?.availability || "");
-      setProfileStatus(user?.profileStatus || true);
+      setAvaTime(user?.avaTime || "");
+      setisPublic(user?.public || true);
     }
   }, [session]);
 
@@ -55,27 +59,26 @@ export default function EditProfile() {
                   htmlFor="name"
                   className="text-foreground font-medium py-2"
                 >
-                  Name : {name || "Your Name"}
+                  Name : {username}
                 </Label>
-                <div className=" flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2">
                   <Input
                     id="name"
                     placeholder={"update your name here"}
                     className="bg-background border-border text-foreground placeholder:text-muted-foreground w-full"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                   <Button
                     onClick={async () => {
                       const res = await axios.post(
                         "/api/user/editprofile/name",
                         {
-                          name,
+                          username,
                         }
                       );
 
                       if (res.status === 200) {
-                        await update({ name });
+                        await update({ username });
                       }
 
                       setError(res.data.message);
@@ -93,14 +96,13 @@ export default function EditProfile() {
                   htmlFor="location"
                   className="text-foreground font-medium"
                 >
-                  Location : {location || "Your Location"}
+                  Location : {location}
                 </Label>
                 <div className="flex items-center justify-between gap-2">
                   <Input
                     id="location"
                     placeholder={"update your location here"}
                     className="bg-background border-border text-foreground placeholder:text-muted-foreground"
-                    value={location}
                     onChange={(e) => setLocation(e.target.value)}
                   />
                   <Button
@@ -135,7 +137,6 @@ export default function EditProfile() {
                     id="bio"
                     className="bg-background border-border text-foreground placeholder:text-muted-foreground resize-none"
                     placeholder={"update your bio here"}
-                    value={bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
                   <Button
@@ -166,10 +167,10 @@ export default function EditProfile() {
                   htmlFor="availability"
                   className="text-foreground font-medium"
                 >
-                  Availability : {availability || "Your Availability"}
+                  Availability : {avaTime}
                 </Label>
                 <div className="flex items-center justify-between gap-2">
-                  <Select value={availability} onValueChange={setAvailability}>
+                  <Select value={avaTime} onValueChange={setAvaTime}>
                     <SelectTrigger className="border-border text-foreground ">
                       <SelectValue placeholder={"Select availability"} />
                     </SelectTrigger>
@@ -188,13 +189,13 @@ export default function EditProfile() {
                       const res = await axios.post(
                         "/api/user/editprofile/availability",
                         {
-                          availability,
+                          avaTime,
                         }
                       );
                       console.log(res);
 
                       if (res.status === 200) {
-                        await update({ availability });
+                        await update({ avaTime });
                       }
 
                       setError(res.data.message);
@@ -213,14 +214,12 @@ export default function EditProfile() {
                   htmlFor="availability"
                   className="text-foreground font-medium"
                 >
-                  profile visibility : {profileStatus ? "Public" : "Private"}
+                  profile visibility : {ispublic ? "Public" : "Private"}
                 </Label>
                 <div className="flex items-center justify-between gap-2">
                   <Select
-                    value={profileStatus ? "true" : "false"}
-                    onValueChange={(value) =>
-                      setProfileStatus(value === "true")
-                    }
+                    value={ispublic ? "true" : "false"}
+                    onValueChange={(value) => setisPublic(value === "true")}
                   >
                     <SelectTrigger className="border-border text-foreground ">
                       <SelectValue placeholder={"Select profile visibility"} />
@@ -235,13 +234,13 @@ export default function EditProfile() {
                       const res = await axios.post(
                         "/api/user/editprofile/profileStatus",
                         {
-                          profileStatus,
+                          ispublic,
                         }
                       );
                       console.log(res);
 
                       if (res.status === 200) {
-                        await update({ profileStatus });
+                        await update({ ispublic });
                       }
 
                       setError(res.data.message);
