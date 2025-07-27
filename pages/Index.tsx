@@ -19,7 +19,7 @@ export default function BrowsePage() {
 
   useEffect(() => {
     setAuths(status);
-    // fetchSkills();
+    fetchSkills();
   }, [status]);
 
   return (
@@ -89,38 +89,39 @@ export default function BrowsePage() {
             <h2 className="text-2xl font-semibold text-white mb-6">
               Available Skill Swappers
             </h2>
-            {/* <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {skills.map((user: any) => {
                 const skillsOffered = user.skills
-                  .filter((s: any) => s.skillType === "OFFERED")
+                  .filter((s: any) => s.type === "OFFERED")
                   .map((s: any) => ({
-                    id: s.id,
-                    name: s.name,
+                    id: s.skill.id,
+                    name: s.skill.name,
                     level: s.level,
                   }));
 
                 const skillsWanted = user.skills
-                  .filter((s: any) => s.skillType === "WANTED")
+                  .filter((s: any) => s.type === "WANTED")
                   .map((s: any) => ({
-                    id: s.id,
-                    name: s.name,
+                    id: s.skill.id,
+                    name: s.skill.name,
                     level: s.level,
                   }));
                 return (
                   <SkillCard
                     key={user.id}
                     id={user.id}
-                    rating={5}
-                    userName={user.name}
+                    rating={user.averageRating}
+                    userName={user.username}
                     location={user.location}
-                    availability={user.availability}
+                    availability={user.avaTime}
                     isOnline={true}
                     skillsWanted={skillsWanted}
                     skillsOffered={skillsOffered}
+                    bio={user.bio}
                   />
                 );
               })}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

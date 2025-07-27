@@ -1,16 +1,16 @@
-import { NextResponse, NextRequest } from "@/pages/node_modules/next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
-const prisma = new PrismaClient();
 const schema = z.object({
   public: z.boolean(),
 });
 
 export async function POST(req: NextRequest) {
   try {
+    const prisma = new PrismaClient();
     const session = await getServerSession(NEXT_AUTH);
     const id = session?.user?.id;
 

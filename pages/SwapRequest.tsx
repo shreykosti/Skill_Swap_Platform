@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,36 +7,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Star, MessageCircle } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function SwapRequest() {
-  // const { userId } = useParams();
   const [message, setMessage] = useState("");
-  const [currentPage] = useState("browse");
-
-  // Mock user data - in real app this would come from API
-  const user = {
-    id: "1",
-    name: "Marc Demo",
-    avatar: "/placeholder.svg",
-    rating: 4.8,
-    reviewCount: 24,
-    skillsOffered: ["Web Development", "React", "JavaScript", "UI/UX Design"],
-    skillsWanted: [
-      "Python",
-      "Machine Learning",
-      "Data Science",
-      "Backend Development",
-    ],
-    bio: "Full-stack developer with 5 years of experience. Passionate about creating beautiful and functional web applications.",
-    location: "San Francisco, CA",
-  };
-
-  const handleSendRequest = () => {
-    // Handle swap request logic here
-    console.log("Sending swap request with message:", message);
-  };
+  const searchParams = useSearchParams();
+  const username = searchParams ? searchParams.get("username") : null;
+  const location = searchParams ? searchParams.get("location") : null;
+  const rating = searchParams ? searchParams.get("rating") : null;
+  const bio = searchParams ? searchParams.get("bio") : null;
+  const availability = searchParams ? searchParams.get("availability") : null;
+  const skillsOffered = searchParams
+    ? JSON.parse(searchParams.get("skillsOffered") || "[]")
+    : [];
+  const skillsWanted = searchParams
+    ? JSON.parse(searchParams.get("skillsWanted") || "[]")
+    : [];
+  console.log(bio);
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -56,43 +44,20 @@ export default function SwapRequest() {
             <Card className="bg-slate-800 border-slate-700 rounded-lg">
               <CardHeader>
                 <div className="flex items-center space-x-4">
-                  <Avatar className="h-20 w-20">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="bg-slate-600 text-white text-lg">
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
                   <div>
                     <CardTitle className="text-2xl text-white">
-                      {user.name}
+                      {username}
                     </CardTitle>
-                    <p className="text-slate-400">{user.location}</p>
+                    <p className="text-slate-400">{location}</p>
                     <div className="flex items-center mt-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < Math.floor(user.rating)
-                                ? "text-yellow-400 fill-current"
-                                : "text-slate-600"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-white ml-2">{user.rating}</span>
-                      <span className="text-slate-400 ml-1">
-                        ({user.reviewCount} reviews)
-                      </span>
+                      <span className="text-white ml-2">{rating}</span>
+                      <span className="text-slate-400 ml-1">reviewCount</span>
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-slate-300 mb-6">{user.bio}</p>
+                <p className="text-slate-300 mb-6">{bio}</p>
 
                 {/* Skills Offered */}
                 <div className="mb-6">
@@ -100,12 +65,15 @@ export default function SwapRequest() {
                     Skills Offered
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {user.skillsOffered.map((skill, index) => (
+                    {skillsOffered.map((skill: any) => (
                       <Badge
-                        key={index}
+                        key={skill.id}
                         className="bg-green-600 text-white hover:bg-green-700 transition-colors"
                       >
-                        {skill}
+                        {skill.name}
+                        <span className="ml-1 text-xs opacity-70">
+                          ({skill.level})
+                        </span>
                       </Badge>
                     ))}
                   </div>
@@ -117,13 +85,15 @@ export default function SwapRequest() {
                     Skills Wanted
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {user.skillsWanted.map((skill, index) => (
+                    {skillsWanted.map((skill: any) => (
                       <Badge
-                        key={index}
-                        variant="outline"
-                        className="border-slate-600 text-slate-300 hover:bg-slate-700 transition-colors"
+                        key={skill.id}
+                        className="bg-green-600 text-white hover:bg-green-700 transition-colors"
                       >
-                        {skill}
+                        {skill.name}
+                        <span className="ml-1 text-xs opacity-70">
+                          ({skill.level})
+                        </span>
                       </Badge>
                     ))}
                   </div>
@@ -155,24 +125,14 @@ export default function SwapRequest() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button
-                    onClick={handleSendRequest}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors rounded-lg"
-                  >
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors rounded-lg">
                     Send Request
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors rounded-lg"
-                  >
-                    Save to Favorites
                   </Button>
                 </div>
 
                 <div className="text-xs text-slate-400 pt-2 border-t border-slate-700">
-                  Your request will be sent to {user.name}. They can accept,
-                  decline, or message you back.
+                  Your request will be sent to NAME. They can accept, decline,
+                  or message you back.
                 </div>
               </CardContent>
             </Card>
@@ -181,4 +141,31 @@ export default function SwapRequest() {
       </div>
     </div>
   );
+}
+
+{
+  /* <Avatar className="h-20 w-20">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="bg-slate-600 text-white text-lg">
+                      {user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar> */
+}
+
+{
+  /* <div className="flex items-center bg-black">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.floor(user.rating)
+                                ? "text-yellow-400 fill-current"
+                                : "text-slate-600"
+                            }`}
+                          />
+                        ))}
+                      </div> */
 }

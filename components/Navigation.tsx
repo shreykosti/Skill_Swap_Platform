@@ -8,8 +8,10 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, use } from "react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function Navigation() {
+  const router = useRouter();
   const { status } = useSession();
   const [authStatus, setAuthStatus] = useState(status);
   useEffect(() => {
@@ -40,21 +42,32 @@ export function Navigation() {
 
           {/* Navigation Links */}
           <div className="flex items-center space-x-6">
-            <Button className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] size-sm">
-              <Link href="/">Browse Skills</Link>
+            <Button
+              onClick={() => {
+                router.push("/");
+              }}
+              className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] size-sm"
+            >
+              Browse Skills
             </Button>
             <Button
+              onClick={() => {
+                router.push("/f/user/myswaps");
+              }}
               size="sm"
               className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px]"
             >
-              <Link href="/f/user/myswaps">My Swaps</Link>
+              My Swaps
               <Badge className="ml-2 bg-yellow-500 text-black text-xs">3</Badge>
             </Button>
             <Button
+              onClick={() => {
+                router.push("/f/user/profile");
+              }}
               size="sm"
               className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px]"
             >
-              <Link href="/f/user/profile">Profile</Link>
+              Profile
             </Button>
 
             {/* Auth Buttons */}
@@ -74,17 +87,13 @@ export function Navigation() {
                 {/* <Link href="/f/auth/signin">Sign In</Link> */}
               </Button>
               <Button
+                onClick={() => {
+                  router.push("/f/auth/signup");
+                }}
                 size="sm"
                 className="text-white hover:text-green-400 hover:bg-slate-700 transition-colors rounded-[5px] bg-green-600"
               >
-                <Link
-                  href="/f/auth/signup"
-                  onClick={() => {
-                    console.log("Sign Up Clicked");
-                  }}
-                >
-                  Sign Up
-                </Link>
+                Sign Up
               </Button>
             </div>
             <div

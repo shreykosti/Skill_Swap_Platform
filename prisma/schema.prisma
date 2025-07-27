@@ -18,7 +18,7 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String  
-  username  String?  @unique 
+  username  String  @unique 
   location  String?  
   bio       String?  @db.Text
   public    Boolean? @default(true)
@@ -58,5 +58,13 @@ enum SkillLevel {
   INTERMEDIATE
   ADVANCED
   EXPERT
+}
+
+enum SwapStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
 }
 

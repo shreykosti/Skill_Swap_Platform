@@ -12,7 +12,6 @@ const schema = z.object({
   description: z.string().min(1, "Skill description is required"),
 });
 
-const session = getServerSession(NEXT_AUTH);
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(NEXT_AUTH);

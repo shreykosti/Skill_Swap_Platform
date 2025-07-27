@@ -13,15 +13,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation"; // ✅ Works in App Router
 
 import { useSession } from "next-auth/react";
 
 const SignIn = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const session = useSession();
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
       <div className="w-full max-w-md space-y-4">
@@ -98,7 +99,14 @@ const SignIn = () => {
                     password: password,
                     redirect: false,
                   });
-                  console.log(result);
+
+                  if (result && result.ok === true) {
+                    router.push("/");
+                  }
+
+                  if (result && result.ok === false) {
+                    alert("Invalid credentials, please try again.");
+                  }
                 }}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
@@ -113,7 +121,7 @@ const SignIn = () => {
                   href="/f/auth/signup"
                   className="font-medium text-green-400 hover:underline"
                 >
-                  Sign up{JSON.stringify(session)}
+                  Sign up
                 </Link>
               </p>
             </div>
@@ -121,14 +129,14 @@ const SignIn = () => {
         </Card>
       </div>
 
-      <button
+      {/* <button
         className="text-green-500 hover:text-green-700 mt-4"
         onClick={() => {
           signOut();
         }}
       >
         signout
-      </button>
+      </button> */}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star, Clock, MessageCircle } from "lucide-react";
-import { useRouter } from "@/pages/node_modules/next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Skill {
   id: string;
@@ -22,6 +22,7 @@ interface SkillCardProps {
   skillsWanted: Skill[];
   availability: string;
   isOnline: boolean;
+  bio?: string;
 }
 
 export function SkillCard({
@@ -34,6 +35,7 @@ export function SkillCard({
   skillsWanted,
   availability,
   isOnline,
+  bio,
 }: SkillCardProps) {
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -53,6 +55,7 @@ export function SkillCard({
   return (
     <Card className="bg-slate-800 border-slate-700 shadow-lg hover:shadow-xl hover:bg-slate-750 transition-all duration-300 hover:scale-[1.02] rounded-xl">
       <CardHeader className="pb-4">
+        {bio}
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -144,7 +147,11 @@ export function SkillCard({
         <div className="flex space-x-2 pt-2">
           <Button
             onClick={() => {
-              router.push("/f/user/myswaps/swaprequest");
+              router.push(
+                `/f/user/myswaps/swaprequest?username=${userName}&location=${location}&rating=${rating}&availability=${availability}&bio=${bio}&skillsOffered=${JSON.stringify(
+                  skillsOffered
+                )}&skillsWanted=${JSON.stringify(skillsWanted)}`
+              );
             }}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white transition-colors duration-200 rounded-lg"
             size="sm"
