@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       body.bio == "" ||
       body.bio == null ||
       body.bio == undefined ||
-      body.bio == session.user?.bio
+      body.bio == session?.user?.bio
     ) {
       return NextResponse.json(
         { message: "Bio is not invalid or same" },

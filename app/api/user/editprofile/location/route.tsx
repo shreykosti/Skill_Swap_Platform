@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       body.location == "" ||
       body.location == null ||
       body.location == undefined ||
-      body.location == session.user?.location
+      body.location == session?.user?.location
     ) {
       return NextResponse.json(
         { message: "Location is not invalid or same" },

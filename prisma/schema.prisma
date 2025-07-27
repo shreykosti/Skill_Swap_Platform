@@ -19,33 +19,72 @@ model User {
   email     String   @unique
   password  String  
   username  String  @unique 
-  location  String?  
-  bio       String?  @db.Text
-  public    Boolean? @default(true)
-  avaTime   String?  @default("anytime")
+  location  String  
+  bio       String  @db.Text
+  public    Boolean @default(true)
+  avaTime   String  @default("anytime")
   averageRating Float? @default(0)
   // --- Relationships ---
   skills UserSkill[]
+  sentSwaps       SwapRequest[] @relation("SentSwaps")
+  receivedSwaps   SwapRequest[] @relation("ReceivedSwaps")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
 }
 
 model Skill {
-  id          Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name        String   @unique 
   category    String?  @default("tech")
   users UserSkill[]
 }
 
+//join
 model UserSkill {
+  id          String    @id @default(cuid()) 
   userId  String
-  skillId Int
+  skillId String
   type    SkillType 
-  level   SkillLevel? 
-  description String?     @db.Text 
+  level   SkillLevel
+  description String     @db.Text 
   // --- Relationships ---
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
- @@id([userId, skillId, type])
+
+   swapRequests SwapRequestSkill[]
+ @@unique([userId, skillId, type])
+
+}
+
+model SwapRequest {
+  id                String      @id @default(cuid())
+  requesterId       String
+  responderId       String
+  message           String?     @db.Text
+  status            SwapStatus  @default(PENDING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  requester         User        @relation("SentSwaps", fields: [requesterId], references: [id], onDelete: Cascade)
+  responder         User        @relation("ReceivedSwaps", fields: [responderId], references: [id], onDelete: Cascade)
+  // A swap request is now composed of a list of skills
+  skills            SwapRequestSkill[]
+}
+
+//join
+model SwapRequestSkill {
+  id              String          @id @default(cuid())
+  swapRequestId   String
+  userSkillId     String
+  type            SwapSkillType   // Is this skill OFFERED or WANTED in this swap?
+
+  swapRequest     SwapRequest     @relation(fields: [swapRequestId], references: [id], onDelete: Cascade)
+  userSkill       UserSkill       @relation(fields: [userSkillId], references: [id], onDelete: Cascade)
+
+  @@unique([swapRequestId, userSkillId]) // Prevents adding the same skill to the same swap twice
+  createdAt DateTime @default(now())
 }
 
 enum SkillType {
@@ -59,12 +98,16 @@ enum SkillLevel {
   ADVANCED
   EXPERT
 }
-
 enum SwapStatus {
   PENDING
   ACCEPTED
-  REJECTED
+  DECLINED
   COMPLETED
   CANCELLED
 }
 
+
+enum SwapSkillType {
+  OFFERED // The requester is offering this skill
+  WANTED  // The requester wants this skill from the responder
+}

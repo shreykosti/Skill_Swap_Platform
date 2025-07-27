@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 import zod from "zod";
 import bcrypt from "bcryptjs";
+import { NextAuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ const userschema = zod.object({
   password: zod.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const NEXT_AUTH = {
+export const NEXT_AUTH: NextAuthOptions = {
   // Add your NextAuth configuration here
   providers: [
     CredentialsProvider({
@@ -25,7 +26,7 @@ export const NEXT_AUTH = {
       },
       async authorize(credentials) {
         console.log("auth");
-        const { email, password } = credentials || {};
+        const { email, password } = credentials || { email: "", password: "" };
 
         if (!credentials) {
           console.log("No credentials provided");
@@ -61,13 +62,13 @@ export const NEXT_AUTH = {
         console.log("User:", user);
         return {
           id: user.id,
-          email,
-          username: user.username,
-          location: user.location,
-          availability: user.avaTime,
-          public: user.public,
-          bio: user.bio,
-          averageRating: user.averageRating,
+          email: user.email ?? "",
+          username: user.username ?? "",
+          location: user.location ?? "",
+          avaTime: user.avaTime ?? "",
+          public: user.public ?? false,
+          bio: user.bio ?? "",
+          averageRating: user.averageRating ?? 0,
         };
       },
     }),
@@ -75,20 +76,19 @@ export const NEXT_AUTH = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    jwt: async ({ token, user, trigger, session }: any) => {
+    jwt: async ({ token, user, trigger, session }) => {
       if (user) {
         // Initial sign in
         token.username = user.username;
-        token.email = user.email;
-        const u = user as any;
-        token.location = u.location;
-        token.avaTime = u.avaTime;
-        token.public = u.public;
-        token.bio = u.bio;
-        token.averageRating = u.averageRating;
+        token.email = user.email ?? "";
+        token.location = user.location;
+        token.avaTime = user.avaTime;
+        token.public = user.public;
+        token.bio = user.bio;
+        token.averageRating = user.averageRating;
       }
       // 👇 This handles updates from `update()` on the client
-      if (trigger === "update") {
+      if (trigger === "update" && session) {
         token.username = session.username ?? token.username;
         token.email = session.email ?? token.email;
         token.location = session.location ?? token.location;
@@ -100,10 +100,10 @@ export const NEXT_AUTH = {
 
       return token;
     },
-    session: ({ session, token }: any) => {
-      session.user.id = token.sub;
+    session: ({ session, token }) => {
+      session.user.id = token.sub || "";
       session.user.username = token.username;
-      session.user.email = token.email;
+      session.user.email = token.email || "";
       session.user.location = token.location;
       session.user.avaTime = token.avaTime;
       session.user.public = token.public;

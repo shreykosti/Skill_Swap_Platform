@@ -1,5 +1,5 @@
 import { PrismaClient } from "@/lib/generated/prisma/client";
-import { NextResponse, NextRequest } from "@/pages/node_modules/next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 

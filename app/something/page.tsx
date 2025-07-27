@@ -4,7 +4,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
-export default function () {
+export default function SomethingPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const session = useSession();

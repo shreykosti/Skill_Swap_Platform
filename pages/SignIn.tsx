@@ -12,10 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation"; // ✅ Works in App Router
-
-import { useSession } from "next-auth/react";
 
 const SignIn = () => {
   const router = useRouter();
@@ -116,7 +114,7 @@ const SignIn = () => {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-400">
-                Don't have an account?{"   "}
+                Don&apos;t have an account?{"   "}
                 <Link
                   href="/f/auth/signup"
                   className="font-medium text-green-400 hover:underline"

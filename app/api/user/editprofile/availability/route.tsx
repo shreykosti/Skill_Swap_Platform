@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
-
 const schema = z.object({
   avaTime: z.string().min(1, "Availability is required"),
 });
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
       body.avaTime == "" ||
       body.avaTime == null ||
       body.avaTime == undefined ||
-      body.avaTime == session.user?.avaTime
+      body.avaTime == session?.user?.avaTime
     ) {
       return NextResponse.json(
         { message: "Availability is not invalid or same" },

@@ -1,7 +1,7 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { TrendingUp, Users, Zap, Globe } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { TrendingUp, Users, Zap } from "lucide-react";
 import { SwapRequestCard } from "@/components/SwapRequestCard";
 import { useToast } from "@/hooks/use-toast";
 
@@ -45,7 +45,7 @@ const mockSwapRequests = [
 
 export default function MySwapsPage() {
   const { toast } = useToast();
-  const handleDeleteRequest = (requestId: string) => {
+  const handleDeleteRequest = (_requestId: string) => {
     toast({
       title: "Request Deleted",
       description: "Your swap request has been deleted.",
@@ -53,23 +53,23 @@ export default function MySwapsPage() {
   };
 
   const handleRateSwap = (
-    requestId: string,
-    rating: number,
-    feedback: string
+    _requestId: string,
+    _rating: number,
+    _feedback: string
   ) => {
     toast({
       title: "Rating Submitted!",
       description: "Thank you for your feedback.",
     });
   };
-  const handleAcceptRequest = (requestId: string) => {
+  const handleAcceptRequest = (_requestId: string) => {
     toast({
       title: "Request Accepted!",
       description: "You've accepted the skill swap request.",
     });
   };
 
-  const handleRejectRequest = (requestId: string) => {
+  const handleRejectRequest = (_requestId: string) => {
     toast({
       title: "Request Declined",
       description: "You've declined the skill swap request.",

@@ -127,7 +127,7 @@ export function SwapRequestCard({ request, onAccept, onReject, onMessage, onDele
         {/* Message */}
         {request.message && (
           <div className="bg-slate-600/20 rounded-lg p-3">
-            <p className="text-sm text-white">"{request.message}"</p>
+            <p className="text-sm text-white">&quot;{request.message}&quot;</p>
           </div>
         )}
 

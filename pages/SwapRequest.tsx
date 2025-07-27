@@ -1,14 +1,18 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Star, MessageCircle } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+
+interface Skill {
+  id: number;
+  name: string;
+  level: string | null;
+}
 
 export default function SwapRequest() {
   const [message, setMessage] = useState("");
@@ -17,13 +21,13 @@ export default function SwapRequest() {
   const location = searchParams ? searchParams.get("location") : null;
   const rating = searchParams ? searchParams.get("rating") : null;
   const bio = searchParams ? searchParams.get("bio") : null;
-  const availability = searchParams ? searchParams.get("availability") : null;
+
   const skillsOffered = searchParams
-    ? JSON.parse(searchParams.get("skillsOffered") || "[]")
-    : [];
+    ? JSON.parse(searchParams.get("skillsOffered") || "[]") as Skill[]
+    : [] as Skill[];
   const skillsWanted = searchParams
-    ? JSON.parse(searchParams.get("skillsWanted") || "[]")
-    : [];
+    ? JSON.parse(searchParams.get("skillsWanted") || "[]") as Skill[]
+    : [] as Skill[];
   console.log(bio);
 
   return (
@@ -65,7 +69,7 @@ export default function SwapRequest() {
                     Skills Offered
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {skillsOffered.map((skill: any) => (
+                    {skillsOffered.map((skill: Skill) => (
                       <Badge
                         key={skill.id}
                         className="bg-green-600 text-white hover:bg-green-700 transition-colors"
@@ -85,7 +89,7 @@ export default function SwapRequest() {
                     Skills Wanted
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {skillsWanted.map((skill: any) => (
+                    {skillsWanted.map((skill: Skill) => (
                       <Badge
                         key={skill.id}
                         className="bg-green-600 text-white hover:bg-green-700 transition-colors"

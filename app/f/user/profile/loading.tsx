@@ -1,3 +1,3 @@
-export default function () {
+export default function ProfileLoading() {
   return <div>loading...</div>;
 }

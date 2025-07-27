@@ -1,26 +1,48 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Users, Zap, Globe } from "lucide-react";
 import { SkillCard } from "@/components/SkillCard";
 import { Navigation } from "@/components/Navigation";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 
+interface Skill {
+  id: number;
+  name: string;
+  level: string | null;
+}
+
+interface UserSkill {
+  skill: Skill;
+  type: "OFFERED" | "WANTED";
+  level: string | null;
+}
+
+interface User {
+  id: string;
+  username: string | null;
+  location: string | null;
+  avaTime: string | null;
+  averageRating: number | null;
+  bio: string | null;
+  skills: UserSkill[];
+}
+
 export default function BrowsePage() {
   const { status } = useSession();
   const [auths, setAuths] = useState("unauthenticated");
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState<User[]>([]);
 
-  const fetchSkills = async () => {
+  const fetchSkills = useCallback(async () => {
     const res = await axios.get("/api/skill");
     setAuths(status);
     setSkills(res.data);
-  };
+  }, [status]);
 
   useEffect(() => {
     setAuths(status);
     fetchSkills();
-  }, [status]);
+  }, [status, fetchSkills]);
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -90,34 +112,34 @@ export default function BrowsePage() {
               Available Skill Swappers
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {skills.map((user: any) => {
+              {skills.map((user: User) => {
                 const skillsOffered = user.skills
-                  .filter((s: any) => s.type === "OFFERED")
-                  .map((s: any) => ({
-                    id: s.skill.id,
+                  .filter((s: UserSkill) => s.type === "OFFERED")
+                  .map((s: UserSkill) => ({
+                    id: s.skill.id.toString(),
                     name: s.skill.name,
-                    level: s.level,
+                    level: (s.level as "Beginner" | "Intermediate" | "Advanced" | "Expert") || "Beginner",
                   }));
 
                 const skillsWanted = user.skills
-                  .filter((s: any) => s.type === "WANTED")
-                  .map((s: any) => ({
-                    id: s.skill.id,
+                  .filter((s: UserSkill) => s.type === "WANTED")
+                  .map((s: UserSkill) => ({
+                    id: s.skill.id.toString(),
                     name: s.skill.name,
-                    level: s.level,
+                    level: (s.level as "Beginner" | "Intermediate" | "Advanced" | "Expert") || "Beginner",
                   }));
                 return (
                   <SkillCard
                     key={user.id}
                     id={user.id}
-                    rating={user.averageRating}
-                    userName={user.username}
-                    location={user.location}
-                    availability={user.avaTime}
+                    rating={user.averageRating || 0}
+                    userName={user.username || "Anonymous"}
+                    location={user.location || undefined}
+                    availability={user.avaTime || "Not specified"}
                     isOnline={true}
                     skillsWanted={skillsWanted}
                     skillsOffered={skillsOffered}
-                    bio={user.bio}
+                    bio={user.bio || undefined}
                   />
                 );
               })}

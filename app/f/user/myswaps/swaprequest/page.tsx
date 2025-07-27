@@ -1,6 +1,6 @@
 import SwapRequest from "@/pages/SwapRequest";
 
-export default function () {
+export default function SwapRequestPage() {
   return (
     <div>
       <SwapRequest />

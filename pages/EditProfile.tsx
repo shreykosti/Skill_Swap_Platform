@@ -19,9 +19,9 @@ import axios from "axios";
 
 export default function EditProfile() {
   const router = useRouter();
-  const { data: session, status, update } = useSession();
+  const { data: session, update } = useSession();
   console.log(session);
-  const user: any = session?.user;
+  const user = session?.user as { username?: string; location?: string; bio?: string; avaTime?: string; public?: boolean } | undefined;
 
   const [error, setError] = useState("update101");
   const [username, setUsername] = useState(
@@ -34,11 +34,11 @@ export default function EditProfile() {
   const [avaTime, setAvaTime] = useState(
     user?.avaTime || "update your avaTime here"
   );
-  const [ispublic, setisPublic] = useState(user?.public || true);
+  const [ispublic, setisPublic] = useState<boolean>(user?.public || true);
 
   useEffect(() => {
     if (session) {
-      const user: any = session.user;
+      const user = session.user as { username?: string; location?: string; bio?: string; avaTime?: string; public?: boolean };
       setUsername(user?.username || "");
       setLocation(user?.location || "");
       setBio(user?.bio || "");
@@ -219,7 +219,7 @@ export default function EditProfile() {
                 <div className="flex items-center justify-between gap-2">
                   <Select
                     value={ispublic ? "true" : "false"}
-                    onValueChange={(value) => setisPublic(value === "true")}
+                    onValueChange={(value) => setisPublic(value === "true" ? true : false)}
                   >
                     <SelectTrigger className="border-border text-foreground ">
                       <SelectValue placeholder={"Select profile visibility"} />

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       body.username == "" ||
       body.username == null ||
       body.username == undefined ||
-      body.username == session.user?.username
+      body.username == session?.user?.username
     ) {
       return NextResponse.json(
         { message: "username is not invalid or same" },

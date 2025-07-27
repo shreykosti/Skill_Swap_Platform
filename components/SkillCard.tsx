@@ -26,7 +26,7 @@ interface SkillCardProps {
 }
 
 export function SkillCard({
-  id,
+  id: _id,
   userName,
   userAvatar,
   location,

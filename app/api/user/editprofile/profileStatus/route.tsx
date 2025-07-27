@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     if (
       body.ispublic == null ||
       body.ispublic == undefined ||
-      body.ispublic == session.user?.ispublic
+      body.ispublic == session?.user?.public
     ) {
       return NextResponse.json(
         { message: "profileStatus is not invalid or same" },
