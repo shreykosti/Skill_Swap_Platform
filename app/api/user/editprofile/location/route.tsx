@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const parsedData = schema.safeParse(body);
     if (!parsedData.success) {
       return NextResponse.json(
-        { message: "Invalid Location" },
+        { message: "Invalid Input" },
         { status: 201 }
       );
     }
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       body.location == session?.user?.location
     ) {
       return NextResponse.json(
-        { message: "Location is not invalid or same" },
+        { message: "Location is not valid or same" },
         { status: 201 }
       );
     }

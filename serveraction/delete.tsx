@@ -21,7 +21,7 @@ export async function deleteSkillAction(formData: FormData) {
       // Use the composite key to find the exact record
       userId_skillId_type: {
         userId: user?.id || "",
-        skillId: parseInt(skillId as string, 10), // Ensure skillId is an integer
+        skillId: skillId as string, // Ensure skillId is a string
         type: skillType as SkillType, // Ensure type is a valid SkillType
       },
     },

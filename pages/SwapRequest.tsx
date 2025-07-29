@@ -21,13 +21,14 @@ export default function SwapRequest() {
   const location = searchParams ? searchParams.get("location") : null;
   const rating = searchParams ? searchParams.get("rating") : null;
   const bio = searchParams ? searchParams.get("bio") : null;
+  const availability = searchParams ? searchParams.get("availability") : null;
 
   const skillsOffered = searchParams
-    ? JSON.parse(searchParams.get("skillsOffered") || "[]") as Skill[]
-    : [] as Skill[];
+    ? (JSON.parse(searchParams.get("skillsOffered") || "[]") as Skill[])
+    : ([] as Skill[]);
   const skillsWanted = searchParams
-    ? JSON.parse(searchParams.get("skillsWanted") || "[]") as Skill[]
-    : [] as Skill[];
+    ? (JSON.parse(searchParams.get("skillsWanted") || "[]") as Skill[])
+    : ([] as Skill[]);
   console.log(bio);
 
   return (
@@ -50,18 +51,21 @@ export default function SwapRequest() {
                 <div className="flex items-center space-x-4">
                   <div>
                     <CardTitle className="text-2xl text-white">
-                      {username}
+                      Name: {username}
                     </CardTitle>
-                    <p className="text-slate-400">{location}</p>
+                    <p className="text-slate-400">Location: {location}</p>
                     <div className="flex items-center mt-2">
-                      <span className="text-white ml-2">{rating}</span>
-                      <span className="text-slate-400 ml-1">reviewCount</span>
+                      <span className="text-white ml-2">Rating: {rating}</span>
+                      <span className="text-white ml-2">
+                        Availability: {availability}
+                      </span>
+                      {/* <span className="text-slate-400 ml-1">reviewCount</span> */}
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-slate-300 mb-6">{bio}</p>
+                <p className="text-slate-300 mb-6">Bio: {bio}</p>
 
                 {/* Skills Offered */}
                 <div className="mb-6">
@@ -135,8 +139,8 @@ export default function SwapRequest() {
                 </div>
 
                 <div className="text-xs text-slate-400 pt-2 border-t border-slate-700">
-                  Your request will be sent to NAME. They can accept, decline,
-                  or message you back.
+                  Your request will be sent to {username}. They can accept,
+                  decline, or message you back.
                 </div>
               </CardContent>
             </Card>

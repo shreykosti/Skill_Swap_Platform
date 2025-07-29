@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const SignUp = () => {
@@ -47,13 +46,13 @@ const SignUp = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-slate-200">
-                  Full Name
+                  Username
                 </Label>
                 <Input
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your username"
                   className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -108,31 +107,21 @@ const SignUp = () => {
                 </div>
               </div>
 
-              <button
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                onClick={async () => {
-                  const response = await axios.post(
-                    "http://localhost:3000/api/auth/signup",
-                    {
-                      username: name,
-                      email,
-                      password,
-                    }
+              <Button
+                onClick={() => {
+                  router.push(
+                    `/f/auth/signup/profile?username=${name}&email=${email}&password=${password}`
                   );
-                  if (response.status === 200) {
-                    router.push("/f/user/profile/editprofile");
-                  } else {
-                    setError(response.data.error || "An error occurred");
-                  }
                 }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
-                Create Account
-              </button>
+                Next
+              </Button>
             </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-400">
-                Already have an account?{" "}
+                Already have an account?
                 <Link
                   href="/f/auth/signin"
                   className="font-medium text-green-400 hover:underline"

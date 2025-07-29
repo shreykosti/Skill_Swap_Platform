@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsedData = schema.safeParse(body);
     if (!parsedData.success) {
-      return NextResponse.json({ message: "Invalid Bio" }, { status: 201 });
+      return NextResponse.json({ message: "Invalid Input" }, { status: 201 });
     }
 
     if (
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       body.bio == session?.user?.bio
     ) {
       return NextResponse.json(
-        { message: "Bio is not invalid or same" },
+        { message: "Bio is not valid or same" },
         { status: 201 }
       );
     }

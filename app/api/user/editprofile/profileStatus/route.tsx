@@ -5,7 +5,7 @@ import { NEXT_AUTH } from "@/lib/auth";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const schema = z.object({
-  public: z.boolean(),
+  ispublic: z.boolean(),
 });
 
 export async function POST(req: NextRequest) {
@@ -23,12 +23,10 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    console.log(body);
     const parsedData = schema.safeParse(body);
     if (!parsedData.success) {
-      return NextResponse.json(
-        { message: "Invalid profileStatushi" },
-        { status: 201 }
-      );
+      return NextResponse.json({ message: "Invalid Input" }, { status: 201 });
     }
 
     if (
@@ -37,7 +35,7 @@ export async function POST(req: NextRequest) {
       body.ispublic == session?.user?.public
     ) {
       return NextResponse.json(
-        { message: "profileStatus is not invalid or same" },
+        { message: "profileStatus is not valid or same" },
         { status: 201 }
       );
     }

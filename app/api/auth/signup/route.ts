@@ -7,22 +7,30 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6, "Password must be at least 6 characters"),
   username: z.string().min(1, "Name is required"),
+  location: z.string().min(1, "Location is required"),
+  bio: z.string().min(1, "Bio is required"),
+  ispublic: z.boolean(),
+  avaTime: z.string().min(1, "Available time is required"),
 });
 
 export async function POST(request: NextRequest) {
-  console.log("Sign Up API called");
-
-  const prisma = new PrismaClient();
-  const body = await request.json();
-
-  const { email, password, username } = body;
-  const validation = schema.safeParse({ email, password, username });
-
-  if (!validation.success) {
-    return NextResponse.json({ message: "wrong input value" }, { status: 201 });
-  }
-
   try {
+    console.log("Sign Up API called");
+
+    const prisma = new PrismaClient();
+    const body = await request.json();
+
+    const validation = schema.safeParse(body);
+    const { email, password, username, location, bio, ispublic, avaTime } =
+      body;
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { message: "wrong input value" },
+        { status: 201 }
+      );
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -53,6 +61,10 @@ export async function POST(request: NextRequest) {
         email,
         password: hash,
         username,
+        location,
+        bio,
+        public: ispublic,
+        avaTime,
       },
     });
 

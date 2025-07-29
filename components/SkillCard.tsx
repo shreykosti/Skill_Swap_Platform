@@ -55,7 +55,6 @@ export function SkillCard({
   return (
     <Card className="bg-slate-800 border-slate-700 shadow-lg hover:shadow-xl hover:bg-slate-750 transition-all duration-300 hover:scale-[1.02] rounded-xl">
       <CardHeader className="pb-4">
-        {bio}
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -160,13 +159,13 @@ export function SkillCard({
             Request Swap
           </Button>
 
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             className="border-slate-600 hover:bg-slate-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all duration-200 rounded-lg"
           >
             View Profile
-          </Button>
+          </Button> */}
         </div>
       </CardContent>
     </Card>
