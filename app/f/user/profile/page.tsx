@@ -9,7 +9,7 @@ import { deleteSkillAction } from "@/serveraction/delete";
 import { MapPin, Star, Clock, Edit, Plus } from "lucide-react";
 import Link from "next/link";
 import { PrismaClient } from "@/lib/generated/prisma/client";
-const prisma = new PrismaClient();
+const prisma = new PrismGITaClient();
 
 import { getServerSession } from "next-auth";
 
