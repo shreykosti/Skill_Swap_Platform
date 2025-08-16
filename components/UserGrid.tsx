@@ -13,6 +13,7 @@ interface Skill {
 
 interface UserSkill {
   skill: Skill;
+  id: string;
   type: "OFFERED" | "WANTED";
   level: string | null;
   description: string | null;
@@ -51,6 +52,7 @@ export default async function UserGrid() {
           type: true, // 'OFFERED' or 'WANTED'
           level: true, // 'BEGINNER', 'INTERMEDIATE', etc.
           description: true,
+          id: true,
           // 4. Also include the actual skill's name
           skill: {
             select: {
@@ -72,8 +74,9 @@ export default async function UserGrid() {
         const skillsOffered = (user.skills ?? [])
           .filter((s: UserSkill) => s.type === "OFFERED")
           .map((s: UserSkill) => ({
-            id: s.skill.id.toString(),
+            userskillid: s.id.toString(),
             name: s.skill.name,
+            description: s.description || null,
             level:
               (s.level as
                 | "Beginner"
@@ -85,7 +88,8 @@ export default async function UserGrid() {
         const skillsWanted = (user.skills ?? [])
           .filter((s: UserSkill) => s.type === "WANTED")
           .map((s: UserSkill) => ({
-            id: s.skill.id.toString(),
+            userskillid: s.id.toString(),
+            description: s.description || null,
             name: s.skill.name,
             level:
               (s.level as

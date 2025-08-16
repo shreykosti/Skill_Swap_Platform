@@ -11,6 +11,10 @@ const schema = z.object({
   bio: z.string().min(1, "Bio is required"),
   ispublic: z.boolean(),
   avaTime: z.string().min(1, "Available time is required"),
+  linkedIn: z.string().url().optional(),
+  github: z.string().url().optional(),
+  x: z.string().url().optional(),
+  website: z.string().url().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,8 +25,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const validation = schema.safeParse(body);
-    const { email, password, username, location, bio, ispublic, avaTime } =
-      body;
+    const {
+      email,
+      password,
+      username,
+      location,
+      bio,
+      ispublic,
+      avaTime,
+      linkedIn,
+      github,
+      x,
+      website,
+    } = body;
 
     if (!validation.success) {
       return NextResponse.json(
@@ -65,10 +80,19 @@ export async function POST(request: NextRequest) {
         bio,
         public: ispublic,
         avaTime,
+        linkedIn,
+        github,
+        twitter: x,
+        website,
       },
     });
 
-    console.log("User created:", newUser);
+    if (!newUser) {
+      return NextResponse.json(
+        { message: "User creation failed" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       { message: "User created successfully" },

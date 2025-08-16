@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,13 +14,13 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SkillManagement } from "@/components/SkillManagement";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import axios from "axios";
 
-export default function EditProfile() {
+function EditProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -30,18 +31,29 @@ export default function EditProfile() {
   const [bio, setBio] = useState("");
   const [avaTime, setAvaTime] = useState("");
   const [ispublic, setisPublic] = useState<boolean>(true);
-
-  console.log("Username:", username);
-  console.log("Email:", email);
-  console.log("Password:", password);
+  const [LinkedIn_Url, setLinkedIn_Url] = useState("");
+  const [Github_Url, setGithub_Url] = useState("");
+  const [X_Url, setX_Url] = useState("");
+  const [Website_Url, setWebsite_Url] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      <div className="container mx-auto px-8 py-8 max-w-2xl ">
+    <div className="min-h-screen bg-gradient-to-br flex justify-center items-center from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="container mx-auto px-8 py-8 max-w-2xl">
+        <Link
+          href="/f/auth/signup"
+          className="inline-flex items-center text-sm text-slate-400 hover:text-green-400 mb-4"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Link>
         <Card className="bg-card/50 backdrop-blur-sm border-border">
           <CardContent className="space-y-8">
             <div className="space-y-6">
               <div className="space-y-2 flex-col">
+                <div className="flex flex-col border p-2 m-3">
+                  <span>username : {username}</span>
+                  <span>email : {email}</span>
+                </div>
                 <Label
                   htmlFor="location"
                   className="text-foreground font-medium"
@@ -51,7 +63,6 @@ export default function EditProfile() {
                 <div className="flex items-center justify-between gap-2">
                   <Input
                     id="location"
-                    placeholder={"update your location here"}
                     className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                     onChange={(e) => setLocation(e.target.value)}
                     value={location}
@@ -67,7 +78,6 @@ export default function EditProfile() {
                   <Textarea
                     id="bio"
                     className="bg-background border-border text-foreground placeholder:text-muted-foreground resize-none"
-                    placeholder={"update your bio here"}
                     onChange={(e) => setBio(e.target.value)}
                     value={bio}
                   />
@@ -123,30 +133,67 @@ export default function EditProfile() {
                     </SelectContent>
                   </Select>
                 </div>
-                {/* <div>
-                  <p>Add skills to your profile:</p>
-                  <SkillManagement skillType="OFFERED">
-                    <Button
-                      size="sm"
-                      className="border-slate-600 hover:bg-slate-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all duration-200 rounded-lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Skill
-                    </Button>
-                  </SkillManagement>
-                </div> */}
-                {/* <div>
-                  <p>Skills you Want to Learn:</p>
-                  <SkillManagement skillType="WANTED">
-                    <Button
-                      size="sm"
-                      className="border-slate-600 hover:bg-slate-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all duration-200 rounded-lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Skill
-                    </Button>
-                  </SkillManagement>
-                </div> */}
+              </div>
+              <div className="space-y-2 flex-col">
+                <Label
+                  htmlFor="Github_Url"
+                  className="text-foreground font-medium"
+                >
+                  Github Url
+                </Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Input
+                    id="Github_Url"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                    onChange={(e) => setGithub_Url(e.target.value)}
+                    value={Github_Url}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2 flex-col">
+                <Label
+                  htmlFor="LinkedIn_Url"
+                  className="text-foreground font-medium"
+                >
+                  LinkedIn Url
+                </Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Input
+                    id="LinkedIn_Url"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                    onChange={(e) => setLinkedIn_Url(e.target.value)}
+                    value={LinkedIn_Url}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2 flex-col">
+                <Label htmlFor="X_Url" className="text-foreground font-medium">
+                  X Url
+                </Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Input
+                    id="X_Url"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                    onChange={(e) => setX_Url(e.target.value)}
+                    value={X_Url}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2 flex-col">
+                <Label
+                  htmlFor="Website_Url"
+                  className="text-foreground font-medium"
+                >
+                  Website Url
+                </Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Input
+                    id="Website_Url"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                    onChange={(e) => setWebsite_Url(e.target.value)}
+                    value={Website_Url}
+                  />
+                </div>
               </div>
             </div>
 
@@ -162,6 +209,10 @@ export default function EditProfile() {
                     bio,
                     ispublic,
                     avaTime,
+                    linkedIn: LinkedIn_Url,
+                    github: Github_Url,
+                    x: X_Url,
+                    website: Website_Url,
                   });
 
                   if (res.status === 200) {
@@ -178,5 +229,13 @@ export default function EditProfile() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function EditProfile() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditProfile />
+    </Suspense>
   );
 }

@@ -7,13 +7,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
 
 interface Skill {
-  id: number;
+  userskillid: string;
   name: string;
+  description: string;
   level: string | null;
 }
-
+interface SelectedSkill {
+  id: string;
+  type: "OFFERED" | "WANTED";
+}
 export default function SwapRequest() {
   const [message, setMessage] = useState("");
   const searchParams = useSearchParams();
@@ -22,6 +27,7 @@ export default function SwapRequest() {
   const rating = searchParams ? searchParams.get("rating") : null;
   const bio = searchParams ? searchParams.get("bio") : null;
   const availability = searchParams ? searchParams.get("availability") : null;
+  const id = searchParams ? searchParams.get("id") : null;
 
   const skillsOffered = searchParams
     ? (JSON.parse(searchParams.get("skillsOffered") || "[]") as Skill[])
@@ -29,7 +35,28 @@ export default function SwapRequest() {
   const skillsWanted = searchParams
     ? (JSON.parse(searchParams.get("skillsWanted") || "[]") as Skill[])
     : ([] as Skill[]);
-  console.log(bio);
+  const [selectedSkills, setSelectedSkills] = useState<SelectedSkill[]>([]);
+
+  // Inside your SwapRequest component
+
+  const handleCheckboxChange = (
+    userskillid: string,
+    type: "OFFERED" | "WANTED"
+  ) => {
+    setSelectedSkills((prev) => {
+      // Check if a skill with this ID already exists
+      const skillExists = prev.some((skill) => skill.id === userskillid);
+
+      if (skillExists) {
+        // If it exists, remove it (unchecking)
+        return prev.filter((skill) => skill.id !== userskillid);
+      } else {
+        // If it doesn't exist, add it (checking)
+        return [...prev, { id: userskillid, type: type }];
+      }
+    });
+  };
+  console.log(skillsOffered);
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -48,19 +75,19 @@ export default function SwapRequest() {
           <div className="lg:col-span-2">
             <Card className="bg-slate-800 border-slate-700 rounded-lg">
               <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <CardTitle className="text-2xl text-white">
-                      Name: {username}
-                    </CardTitle>
-                    <p className="text-slate-400">Location: {location}</p>
-                    <div className="flex items-center mt-2">
-                      <span className="text-white ml-2">Rating: {rating}</span>
-                      <span className="text-white ml-2">
-                        Availability: {availability}
-                      </span>
-                      {/* <span className="text-slate-400 ml-1">reviewCount</span> */}
-                    </div>
+                <div className="flex flex-col justify-around rounded-2xl bg-slate-800 shadow-lg">
+                  <CardTitle className="text-2xl font-semibold text-white mb-1">
+                    {username}
+                  </CardTitle>
+                  <p className="text-sm text-slate-400 mb-3">📍 {location}</p>
+
+                  <div className="flex flex-wrap items-center gap-4">
+                    <span className="text-white bg-slate-700 px-3 py-1 rounded-full text-sm">
+                      ⭐ Rating: {rating}
+                    </span>
+                    <span className="text-white bg-slate-700 px-3 py-1 rounded-full text-sm">
+                      🕒 {availability}
+                    </span>
                   </div>
                 </div>
               </CardHeader>
@@ -75,12 +102,12 @@ export default function SwapRequest() {
                   <div className="flex flex-wrap gap-2">
                     {skillsOffered.map((skill: Skill) => (
                       <Badge
-                        key={skill.id}
+                        key={skill.userskillid}
                         className="bg-green-600 text-white hover:bg-green-700 transition-colors"
                       >
                         {skill.name}
                         <span className="ml-1 text-xs opacity-70">
-                          ({skill.level})
+                          ({skill.description})
                         </span>
                       </Badge>
                     ))}
@@ -95,12 +122,13 @@ export default function SwapRequest() {
                   <div className="flex flex-wrap gap-2">
                     {skillsWanted.map((skill: Skill) => (
                       <Badge
-                        key={skill.id}
+                        key={skill.userskillid}
                         className="bg-green-600 text-white hover:bg-green-700 transition-colors"
                       >
                         {skill.name}
+
                         <span className="ml-1 text-xs opacity-70">
-                          ({skill.level})
+                          ({skill.description})
                         </span>
                       </Badge>
                     ))}
@@ -112,14 +140,78 @@ export default function SwapRequest() {
 
           {/* Request Form */}
           <div>
-            <Card className="bg-slate-800 border-slate-700 rounded-lg sticky top-6">
+            <Card className="bg-slate-800 border-slate-700 rounded-lg sticky top-6 flex flex-col ">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <MessageCircle className="h-5 w-5 mr-2 text-green-400" />
                   Send Swap Request
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+
+              <CardContent className="space-y-6">
+                {/* Skill Selection Section */}
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
+                      Skill you want to offer
+                    </h3>
+                    <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                      {skillsWanted.map((skill) => (
+                        <label
+                          key={skill.userskillid}
+                          htmlFor={skill.name}
+                          className="flex items-center space-x-3 p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 hover:border-green-500 transition-all duration-200 cursor-pointer group"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`offer-${skill.userskillid}`}
+                            checked={selectedSkills.some(
+                              (s: SelectedSkill) => s.id === skill.userskillid
+                            )}
+                            onChange={() =>
+                              handleCheckboxChange(skill.userskillid, "OFFERED")
+                            }
+                            className="w-4 h-4 rounded border-slate-500 bg-slate-600 text-green-600 focus:ring-green-500 focus:ring-2 focus:ring-offset-0"
+                          />
+                          <span className="text-slate-300 group-hover:text-white transition-colors font-medium">
+                            {skill.name}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
+                      Skill you want to learn
+                    </h3>
+                    <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                      {skillsOffered.map((skill) => (
+                        <label
+                          key={skill.userskillid}
+                          htmlFor={skill.name}
+                          className="flex items-center space-x-3 p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 hover:border-green-500 transition-all duration-200 cursor-pointer group"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`offer-${skill.userskillid}`}
+                            checked={selectedSkills.some(
+                              (s: SelectedSkill) => s.id === skill.userskillid
+                            )}
+                            onChange={() =>
+                              handleCheckboxChange(skill.userskillid, "WANTED")
+                            }
+                            className="w-4 h-4 rounded border-slate-500 bg-slate-600 text-green-600 focus:ring-green-500 focus:ring-2 focus:ring-offset-0"
+                          />
+                          <span className="text-slate-300 group-hover:text-white transition-colors font-medium">
+                            {skill.name}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-sm font-medium text-slate-300 mb-2 block">
                     Message (Optional)
@@ -133,14 +225,25 @@ export default function SwapRequest() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors rounded-lg">
+                  <Button
+                    onClick={async () => {
+                      const res = await axios.post("/api/swap/create", {
+                        responderId: id,
+                        message,
+                        skills: selectedSkills,
+                      });
+
+                      console.log("Response:", res);
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors rounded-lg"
+                  >
                     Send Request
                   </Button>
                 </div>
 
                 <div className="text-xs text-slate-400 pt-2 border-t border-slate-700">
                   Your request will be sent to {username}. They can accept,
-                  decline, or message you back.
+                  decline.
                 </div>
               </CardContent>
             </Card>
@@ -149,31 +252,4 @@ export default function SwapRequest() {
       </div>
     </div>
   );
-}
-
-{
-  /* <Avatar className="h-20 w-20">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="bg-slate-600 text-white text-lg">
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar> */
-}
-
-{
-  /* <div className="flex items-center bg-black">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < Math.floor(user.rating)
-                                ? "text-yellow-400 fill-current"
-                                : "text-slate-600"
-                            }`}
-                          />
-                        ))}
-                      </div> */
 }

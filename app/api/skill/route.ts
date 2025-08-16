@@ -28,6 +28,7 @@ export async function GET() {
             type: true, // 'OFFERED' or 'WANTED'
             level: true, // 'BEGINNER', 'INTERMEDIATE', etc.
             description: true,
+            id: true,
             // 4. Also include the actual skill's name
             skill: {
               select: {

@@ -6,10 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star, Clock, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
+import { useSession } from "next-auth/react";
+import { NEXT_AUTH } from "@/lib/auth";
+import { toast } from "react-toastify";
 
 interface Skill {
-  id: string;
+  userskillid: string;
   name: string;
+  description: string | null;
   level: "Beginner" | "Intermediate" | "Advanced" | "Expert";
 }
 
@@ -40,19 +44,21 @@ export function SkillCard({
 }: SkillCardProps) {
   const getLevelColor = (level: string) => {
     switch (level) {
-      case "Beginner":
+      case "BEGINNER":
         return "bg-blue-500/20 text-blue-300 border-blue-500/30";
-      case "Intermediate":
+      case "INTERMEDIATE":
         return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
-      case "Advanced":
+      case "ADVANCED":
         return "bg-orange-500/20 text-orange-300 border-orange-500/30";
-      case "Expert":
+      case "EXPERT":
         return "bg-red-500/20 text-red-300 border-red-500/30";
       default:
         return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
   const router = useRouter();
+  const session = useSession();
+
   return (
     <Suspense fallback={<div>loading</div>}>
       <Card className="bg-slate-800 border-slate-700 shadow-lg hover:shadow-xl hover:bg-slate-750 transition-all duration-300 hover:scale-[1.02] rounded-xl">
@@ -102,7 +108,7 @@ export function SkillCard({
             <div className="flex flex-wrap gap-2">
               {skillsOffered.slice(0, 3).map((skill) => (
                 <Badge
-                  key={skill.id}
+                  key={skill.userskillid}
                   className={`text-xs border ${getLevelColor(skill.level)}`}
                   variant="outline"
                 >
@@ -129,7 +135,7 @@ export function SkillCard({
             <div className="flex flex-wrap gap-2">
               {skillsWanted.slice(0, 3).map((skill) => (
                 <Badge
-                  key={skill.id}
+                  key={skill.userskillid}
                   className="text-xs bg-green-600 text-white shadow-md"
                 >
                   {skill.name}
@@ -150,8 +156,12 @@ export function SkillCard({
           <div className="flex space-x-2 pt-2">
             <Button
               onClick={() => {
+                if (session.status !== "authenticated") {
+                  toast.error("Please log in to request a swap.");
+                  return;
+                }
                 router.push(
-                  `/f/user/myswaps/swaprequest?username=${userName}&location=${location}&rating=${rating}&availability=${availability}&bio=${bio}&skillsOffered=${JSON.stringify(
+                  `/f/user/myswaps/swaprequest?id=${_id}&username=${userName}&location=${location}&rating=${rating}&availability=${availability}&bio=${bio}&skillsOffered=${JSON.stringify(
                     skillsOffered
                   )}&skillsWanted=${JSON.stringify(skillsWanted)}`
                 );

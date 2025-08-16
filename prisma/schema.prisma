@@ -24,6 +24,11 @@ model User {
   public    Boolean @default(true)
   avaTime   String  @default("anytime")
   averageRating Float? @default(0)
+  linkedIn  String? @default("")
+  github    String? @default("")
+  twitter   String? @default("")
+  website   String? @default("")
+  
   // --- Relationships ---
   skills UserSkill[]
   sentSwaps       SwapRequest[] @relation("SentSwaps")
@@ -71,6 +76,7 @@ model SwapRequest {
   responder         User        @relation("ReceivedSwaps", fields: [responderId], references: [id], onDelete: Cascade)
   // A swap request is now composed of a list of skills
   skills            SwapRequestSkill[]
+  @@unique([requesterId, responderId,status])
 }
 
 //join
@@ -78,7 +84,7 @@ model SwapRequestSkill {
   id              String          @id @default(cuid())
   swapRequestId   String
   userSkillId     String
-  type            SwapSkillType   // Is this skill OFFERED or WANTED in this swap?
+  type            SkillType   // Is this skill OFFERED or WANTED in this swap?
 
   swapRequest     SwapRequest     @relation(fields: [swapRequestId], references: [id], onDelete: Cascade)
   userSkill       UserSkill       @relation(fields: [userSkillId], references: [id], onDelete: Cascade)
@@ -104,10 +110,4 @@ enum SwapStatus {
   DECLINED
   COMPLETED
   CANCELLED
-}
-
-
-enum SwapSkillType {
-  OFFERED // The requester is offering this skill
-  WANTED  // The requester wants this skill from the responder
 }
