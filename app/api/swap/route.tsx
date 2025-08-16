@@ -16,14 +16,30 @@ export async function GET() {
         where: { requesterId: session.user.id },
         orderBy: { createdAt: "desc" },
         include: {
-          skills: true,
+          skills: {
+            include: {
+              userSkill: {
+                include: {
+                  skill: true, // 👈 brings in skill name, category, etc.
+                },
+              },
+            },
+          },
         },
       }),
       prisma.swapRequest.findMany({
         where: { responderId: session.user.id },
         orderBy: { createdAt: "desc" },
         include: {
-          skills: true,
+          skills: {
+            include: {
+              userSkill: {
+                include: {
+                  skill: true, // 👈 same here
+                },
+              },
+            },
+          },
         },
       }),
     ]);

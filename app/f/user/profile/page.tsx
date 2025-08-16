@@ -223,8 +223,10 @@ export default async function UserProfile() {
     );
   } catch (error) {
     return (
-      <div>
-        <p className="bg-white">please login</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <h1 className="text-2xl text-white">
+          You must be signed in to view your Profile.
+        </h1>
       </div>
     );
   }

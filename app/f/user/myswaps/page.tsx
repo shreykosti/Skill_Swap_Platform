@@ -1,10 +1,94 @@
-"use client";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { TrendingUp, Users, Zap } from "lucide-react";
 import { SwapRequestCard } from "@/components/SwapRequestCard";
 
-export default function MySwapsPage() {
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
+import { PrismaClient } from "@/lib/generated/prisma/client";
+
+export default async function MySwapsPage() {
+  const session = await getServerSession(NEXT_AUTH);
+
+  if (!session || !session.user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <h1 className="text-2xl text-white">
+          You must be signed in to view your swaps.
+        </h1>
+      </div>
+    );
+  }
+
+  const prisma = new PrismaClient();
+
+  const [outgoing, incoming] = await Promise.all([
+    prisma.swapRequest.findMany({
+      where: { requesterId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        skills: {
+          include: {
+            userSkill: {
+              include: {
+                skill: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+    prisma.swapRequest.findMany({
+      where: { responderId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        skills: {
+          include: {
+            userSkill: {
+              include: {
+                skill: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
+
+  const outgoingSwaps = outgoing.map((swap) => ({
+    id: swap.id,
+    requesterId: swap.requesterId,
+    responderId: swap.responderId,
+    status: swap.status,
+    message: swap.message,
+    createdAt: swap.createdAt,
+    skills: swap.skills.map((skill) => ({
+      id: skill.userSkill.skill.id,
+      name: skill.userSkill.skill.name,
+      category: skill.userSkill.skill.category,
+      type: skill.type,
+      level: skill.userSkill.level,
+      description: skill.userSkill.description,
+    })),
+  }));
+
+  const incomingSwaps = incoming.map((swap) => ({
+    id: swap.id,
+    requesterId: swap.requesterId,
+    responderId: swap.responderId,
+    status: swap.status,
+    message: swap.message,
+    createdAt: swap.createdAt,
+    skills: swap.skills.map((skill) => ({
+      id: skill.userSkill.skill.id,
+      name: skill.userSkill.skill.name,
+      category: skill.userSkill.skill.category,
+      type: skill.type,
+      level: skill.userSkill.level,
+      description: skill.userSkill.description,
+    })),
+  }));
+
   return (
     <div className="min-h-screen bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -39,9 +123,40 @@ export default function MySwapsPage() {
 
           {/* Swap Requests */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">All Requests</h2>
+            <h2 className="text-xl font-semibold text-white">Outgoing Swaps</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <SwapRequestCard />
+              {outgoingSwaps.map((swap) => (
+                <SwapRequestCard
+                  key={swap.id}
+                  swapId={swap.id}
+                  requesterId={swap.requesterId}
+                  responderId={swap.responderId}
+                  skills={swap.skills}
+                  status={swap.status}
+                  message={swap.message ?? ""}
+                  timestamp={swap.createdAt}
+                  incoming={false}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-white">Incoming Swaps</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {incomingSwaps.map((swap) => (
+                <SwapRequestCard
+                  key={swap.id}
+                  swapId={swap.id}
+                  requesterId={swap.requesterId}
+                  responderId={swap.responderId}
+                  skills={swap.skills}
+                  status={swap.status}
+                  message={swap.message ?? ""}
+                  timestamp={swap.createdAt}
+                  incoming={true}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -1,0 +1,11 @@
+// tsconfig.seed.json
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "strict": true
+  },
+  "include": ["prisma/seed.ts"]
+}

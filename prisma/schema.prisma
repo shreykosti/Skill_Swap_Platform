@@ -76,7 +76,7 @@ model SwapRequest {
   responder         User        @relation("ReceivedSwaps", fields: [responderId], references: [id], onDelete: Cascade)
   // A swap request is now composed of a list of skills
   skills            SwapRequestSkill[]
-  @@unique([requesterId, responderId,status])
+  @@unique([requesterId, responderId])
 }
 
 //join
